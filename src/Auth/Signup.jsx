@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { validateEmail } from "../utils/utils";
+import axios from "axios";
 
 function Signup() {
   // useState variables
@@ -9,6 +11,18 @@ function Signup() {
   var [password, setPassword] = useState("");
 
   var [mobile, setMobile] = useState("");
+
+  // Error variables
+  var [nameError, setNameError] = useState("");
+
+  var [emailError, setEmailError] = useState("");
+
+  var [mobileError, setMobileError] = useState("");
+
+  var [passwordError, setPasswordError] = useState("");
+
+  var [apiErrorMsg, setApiErrorMsg] = useState("");
+  var [apiSuccessMsg, setApiSuccessMsg] = useState("");
 
   function handleNameChange(event) {
     console.log(event.target.value);
@@ -26,8 +40,60 @@ function Signup() {
     console.log(event.target.value);
     setMobile(event.target.value);
   }
-  function handleCreateAccount() {
+  async function handleCreateAccount() {
+    var noOfErrors = 0;
     console.log(name, email, mobile, password);
+    console.log(name.length);
+    if (name.length < 3) {
+      setNameError("Min 3 characters");
+      noOfErrors++;
+    } else {
+      setNameError("");
+    }
+
+    if (validateEmail(email)) {
+      setEmailError("");
+    } else {
+      setEmailError("Email is not valid");
+      noOfErrors++;
+    }
+
+    if (mobile.length == 10) {
+      setMobileError("");
+    } else {
+      setMobileError("Mobile number is not valid");
+      noOfErrors++;
+    }
+
+    if (password.length >= 5) {
+      setPasswordError("");
+    } else {
+      setPasswordError("Password must contain 5 letters");
+      noOfErrors++;
+    }
+    if (noOfErrors == 0) {
+      console.log("calling api", noOfErrors);
+      var apiInputData = {
+        email: email,
+        name: name,
+        password: password,
+        mobile: mobile,
+      };
+      console.log(apiInputData);
+      var apiResponse = await axios.post(
+        "https://api.softwareschool.co/auth/signup",
+        apiInputData,
+      );
+      console.log(apiResponse);
+      console.log(apiResponse.data.result);
+      if (apiResponse.data.result == "SUCCESS") {
+        setApiSuccessMsg(apiResponse.data.message);
+        setApiErrorMsg("");
+      } else {
+        setApiErrorMsg(apiResponse.data.message);
+        setApiSuccessMsg("");
+      }
+    }
   }
 
   return (
@@ -43,6 +109,7 @@ function Signup() {
               className="form-control"
               placeholder="Name"
             />
+            <div className="text-danger">{nameError}</div>
           </div>
           <div className="mb-3">
             <label>Email</label>
@@ -52,6 +119,7 @@ function Signup() {
               className="form-control"
               placeholder="Email"
             />
+            <div className="text-danger">{emailError}</div>
           </div>
           <div className="mb-3">
             <label>Password</label>
@@ -62,6 +130,7 @@ function Signup() {
               placeholder="Password"
             />
           </div>
+          <div className="text-danger">{passwordError}</div>
           <div className="mb-3">
             <label>Mobile</label>
             <input
@@ -70,6 +139,7 @@ function Signup() {
               className="form-control"
               placeholder="Mobile Number"
             />
+            <div className="text-danger">{mobileError}</div>
           </div>
           <div>
             <button
@@ -79,7 +149,11 @@ function Signup() {
               Create Account
             </button>
           </div>
-          {name} {email} {password} {mobile}
+          <div className="mt-3">
+            <div className="alert alert-danger">{apiErrorMsg}</div>
+            <div className="alert alert-success">{apiSuccessMsg}</div>
+          </div>
+          {name} {email} {password} {mobile} {apiErrorMsg} {apiSuccessMsg}
         </div>
       </div>
     </div>
