@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 
 function Login() {
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleNameChange(event) {
-    setName(event.target.value);
+  function handleEmailChange(event) {
+    setEmail(event.target.value);
   }
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
   }
 
-  const handleChange = (e) => {
-    console.log(e);
-  };
+  function handleChange() {
+    console.log(email, password);
+  }
 
   return (
     <div className="container mt-5">
@@ -33,7 +33,7 @@ function Login() {
               name="name"
               className="form-control"
               placeholder="Enter your name"
-              onChange={(event) => handleNameChange(event)}
+              onChange={(event) => handleEmailChange(event)}
             />
           </div>
           {/* Password Field */}
