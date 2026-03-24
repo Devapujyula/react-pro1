@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+import { validateEmail } from "../utils/utils";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // error handling
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   function handleEmailChange(event) {
     setEmail(event.target.value);
@@ -14,6 +19,18 @@ function Login() {
 
   function handleChange() {
     console.log(email, password);
+
+    if (validateEmail(email)) {
+      setEmailError("");
+    } else {
+      setEmailError("enter valid email");
+    }
+
+    if (password.length >= 5) {
+      setPasswordError("");
+    } else {
+      setPasswordError("Please enter your 5 digits Password");
+    }
   }
 
   return (
@@ -25,18 +42,17 @@ function Login() {
         <h3 className="text-center mb-4">Login</h3>
 
         <form>
-          {/* Name Field */}
           <div className="mb-3">
-            <label className="form-label">Name</label>
+            <label className="form-label">Email</label>
             <input
               type="text"
               name="name"
               className="form-control"
-              placeholder="Enter your name"
+              placeholder="Enter your Email"
               onChange={(event) => handleEmailChange(event)}
             />
           </div>
-          {/* Password Field */}
+          <div className="text-danger">{emailError}</div>
           <div className="mb-3">
             <label className="form-label">Password</label>
             <input
@@ -47,7 +63,7 @@ function Login() {
               onChange={(event) => handlePasswordChange(event)}
             />
           </div>
-          {/* Button */}
+          <div className="text-danger">{passwordError}</div>
           <button
             type="submit"
             className="btn btn-warning w-100"
